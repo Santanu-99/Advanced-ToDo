@@ -12,6 +12,12 @@ let crossBtn = document.querySelector('.remove-btn');
 let colors = ['lightpink' , 'lightblue' , 'lightgreen' , 'black']
 // Default priority color
 let modalPriorityColor = colors[colors.length-1] // black
+
+
+// filterColor
+let filterColor;
+
+
 // node list of all color divs in modal
 let allPriorityColors = document.querySelectorAll('.priority-color');
 
@@ -79,7 +85,13 @@ function createTicket(color,task) {
    
     mainCont.appendChild(ticketCont);
 
+    
     addRemoveListner(ticketCont);
+    
+    // Based on the selected filter color show the ticket or don't show the ticket
+    if(filterColor != undefined && filterColor != color){
+        ticketCont.style.display = 'none';
+    }
 }
 
 // For deleting a ticket
@@ -102,3 +114,65 @@ function addRemoveListner(ticketCont){
         }
     });
 }
+
+
+// Filter
+let allColorBtn = document.querySelectorAll('.color');
+// console.log(allColorBtn);
+
+allColorBtn.forEach(function(colorBtn){
+
+    colorBtn.addEventListener('click',function(selectEvent){
+       
+        // To highlight the selected filter color
+        allColorBtn.forEach(function(colorBtn){
+            colorBtn.classList.remove('active');
+        })
+        let colorBtn = selectEvent.currentTarget;
+        colorBtn.classList.add('active');
+
+        // get the filter color class
+        let selectedColorClass = colorBtn.classList[1];
+
+        // Set selected filter color globally
+        filterColor = selectedColorClass;
+
+        // get all the tasks ticket
+        let allTaskTicket = mainCont.children;
+
+        // Iterate Each and every one and filter out the desired ticket
+        for(let i=0;i<allTaskTicket.length;i++){
+
+            // Selecting a particular task ticket
+            let currTaskTicket = allTaskTicket[i];
+            let ticketColorClass = currTaskTicket.children[0].classList[1];
+
+            // if selected filter color is equal to ticket color then set display to block otherwise none
+            if(ticketColorClass === selectedColorClass){
+                currTaskTicket.style.display = 'block';
+            }else{
+                currTaskTicket.style.display = 'none';
+            }
+        }
+     
+        
+    })
+})
+
+allColorBtn.forEach(function(colorBtn){
+    colorBtn.addEventListener('dblclick',function(e){
+        e.currentTarget.classList.remove('active');
+
+        // get all the task tickets
+        let allTaskTicket = mainCont.children;
+
+        // and make display block
+        for(let i=0;i<allTaskTicket.length;i++){
+            let currTaskTicket = allTaskTicket[i];
+            currTaskTicket.style.display = 'block';
+        }
+        
+        // Reset the filter color to undefined when no filter color is selected
+        filterColor = undefined;
+    })
+})
