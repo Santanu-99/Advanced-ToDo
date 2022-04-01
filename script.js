@@ -8,6 +8,7 @@ let modalContShow = false;
 let deleteTicket = false;
 let crossBtn = document.querySelector('.remove-btn');
 
+
 // Elements for Priority color selection
 let colors = ['lightpink' , 'lightblue' , 'lightgreen' , 'black']
 // Default priority color
@@ -62,7 +63,7 @@ document.querySelector('body').addEventListener('keydown', function (e) {
         if (key == "Enter") {
             
             // creating task ticket
-            createTicket(modalPriorityColor,textAreaCont.value);
+            createTicket(modalPriorityColor,textAreaCont.value,shortid());
             
             // Resetting modal cont
             textAreaCont.value='';
@@ -75,18 +76,26 @@ document.querySelector('body').addEventListener('keydown', function (e) {
 
 
 // Ticket creater
-function createTicket(color,task) {
+function createTicket(color,task,taskId) {
     let ticketCont = document.createElement('div');
     ticketCont.setAttribute("class", "ticket-cont");
 
     ticketCont.innerHTML =  `<div class="ticket-color ${color}"></div>
-                             <div class="ticket-id">#F12qKca9Po</div>
-                            <div class="task-area">${task}</div>`;
+                             <div class="ticket-id">#${taskId}</div>
+                            <div class="task-area">${task}</div>
+                            <div class="ticket-lock">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>`;
    
     mainCont.appendChild(ticketCont);
 
-    
+    // Adding remove listner
     addRemoveListner(ticketCont);
+
+    // Adding editable listner
+    addEditableListner(ticketCont);
+
+
     
     // Based on the selected filter color show the ticket or don't show the ticket
     if(filterColor != undefined && filterColor != color){
@@ -114,6 +123,54 @@ function addRemoveListner(ticketCont){
         }
     });
 }
+
+// Add task Editable Listner
+let lockClass = "fa-lock";
+let unlockClass = "fa-lock-open";
+function addEditableListner(ticketCont){
+
+    // Getting the lockBtn element
+    let lockBtn = ticketCont.querySelector('.ticket-lock').children[0];
+
+    // Getting ticket task area
+    let ticketTaskArea = ticketCont.querySelector('.task-area');
+
+
+    let ticketBand = ticketCont.querySelector('.ticket-color');
+    let ticketBandAction;
+
+    // on clicking the lock
+    lockBtn.addEventListener('click',function(e){
+        
+        // if the task area is locked 
+        if(lockBtn.classList.contains(lockClass)){
+            // change the lock icon to unlock icon
+            lockBtn.classList.remove(lockClass);
+            lockBtn.classList.add(unlockClass);
+            // Make the task area editable by setting the contenteditable property true
+            ticketTaskArea.setAttribute('contenteditable','true');
+
+        
+
+
+            ticketBand.addEventListener('click',ticketBandAction =function(e){
+                    let ticketBandColor = ticketBand.classList[1];
+                    console.log(ticketBandColor);
+            });
+        }else{
+            // change the unlock icon to lock icon
+            lockBtn.classList.remove(unlockClass);
+            lockBtn.classList.add(lockClass);
+            // Make the task area non editable by setting the contenteditable property false
+            ticketTaskArea.setAttribute('contenteditable','false');
+
+        
+            ticketBand.removeEventListener('click',ticketBandAction);
+        }
+    })
+}
+
+
 
 
 // Filter
@@ -176,3 +233,7 @@ allColorBtn.forEach(function(colorBtn){
         filterColor = undefined;
     })
 })
+
+
+
+

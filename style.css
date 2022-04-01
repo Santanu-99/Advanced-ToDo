@@ -134,8 +134,16 @@ body{
 }
 
 .task-area{
-    height: calc(100% - 1.5rem - 2rem);
+    height: calc(100% - 1.5rem - 2rem - 3rem);
     background-color: lightgrey;
     font-size: 1.5rem;
+    padding: 0.5rem;
+    outline: none;
+}
+
+.ticket-lock{
+    font-size: 2rem;
+    display: flex;
+    justify-content: flex-end;
     padding: 0.5rem;
 }
