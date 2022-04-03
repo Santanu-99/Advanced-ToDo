@@ -154,8 +154,16 @@ function addEditableListner(ticketCont){
 
 
             ticketBand.addEventListener('click',ticketBandAction =function(e){
-                    let ticketBandColor = ticketBand.classList[1];
-                    console.log(ticketBandColor);
+                let ticketBandColor = ticketBand.classList[1];
+                let idx= colors.findIndex(function(color){
+                    return ticketBandColor == color;
+                });
+
+                let newIdx = (idx+1) % colors.length;
+                let newColorClass = colors[newIdx];
+
+                ticketBand.classList.remove(ticketBandColor);
+                ticketBand.classList.add(newColorClass);
             });
         }else{
             // change the unlock icon to lock icon
