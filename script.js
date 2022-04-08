@@ -19,6 +19,9 @@ let modalPriorityColor = colors[colors.length-1] // black
 let filterColor;
 
 
+let ticketArr=[];
+
+
 // node list of all color divs in modal
 let allPriorityColors = document.querySelectorAll('.priority-color');
 
@@ -90,13 +93,19 @@ function createTicket(color,task,taskId) {
     mainCont.appendChild(ticketCont);
 
     // Adding remove listner
-    addRemoveListner(ticketCont);
+    addRemoveListner(ticketCont,taskId);
 
     // Adding editable listner
-    addEditableListner(ticketCont);
+    addEditableListner(ticketCont,taskId);
 
+    // Storage
+    ticketArr.push({
+        ticketColor :color,
+        ticketTask : task,
+        ticketId : taskId
+    });
 
-    
+    console.log(ticketArr);
     // Based on the selected filter color show the ticket or don't show the ticket
     if(filterColor != undefined && filterColor != color){
         ticketCont.style.display = 'none';
@@ -115,19 +124,39 @@ crossBtn.addEventListener('click',function(e){
 })
 
 // Adding event listner on ticket to perform remove action
-function addRemoveListner(ticketCont){
+function addRemoveListner(ticketCont,ticketId){
     
     ticketCont.addEventListener('click',function(e){
         if(deleteTicket){
             e.currentTarget.remove();
+
+
+            // Storage
+            let idx = getTicketArrayId(ticketId);
+            ticketArr.splice(idx,1);
+
+            console.log(ticketArr);
         }
     });
 }
 
+
+
+function getTicketArrayId(ticketId){
+
+    let id = ticketArr.findIndex(function(ticketObj){
+        return ticketObj.ticketId == ticketId;
+    });
+
+    return id;
+}
+
+
+
 // Add task Editable Listner
 let lockClass = "fa-lock";
 let unlockClass = "fa-lock-open";
-function addEditableListner(ticketCont){
+function addEditableListner(ticketCont,ticketId){
 
     // Getting the lockBtn element
     let lockBtn = ticketCont.querySelector('.ticket-lock').children[0];
@@ -150,8 +179,6 @@ function addEditableListner(ticketCont){
             // Make the task area editable by setting the contenteditable property true
             ticketTaskArea.setAttribute('contenteditable','true');
 
-        
-
 
             ticketBand.addEventListener('click',ticketBandAction =function(e){
                 let ticketBandColor = ticketBand.classList[1];
@@ -172,8 +199,18 @@ function addEditableListner(ticketCont){
             // Make the task area non editable by setting the contenteditable property false
             ticketTaskArea.setAttribute('contenteditable','false');
 
-        
             ticketBand.removeEventListener('click',ticketBandAction);
+
+            
+            // Storage
+            let updatedTask = textAreaCont.value;
+            let updatedColor = ticketBand.classList[1];
+
+            let idx = getTicketArrayId(ticketId);
+            ticketArr[idx].ticketColor = updatedColor;
+            ticketArr[idx].ticketTask = ticketTaskArea.textContent;
+
+            console.log(ticketArr);
         }
     })
 }
