@@ -29,6 +29,21 @@ let allPriorityColors = document.querySelectorAll('.priority-color');
 let textAreaCont = document.querySelector('.textarea-cont');
 
 
+// Load Tasks from localStorage if any
+if(localStorage.getItem('tickets')){
+    ticketsArr = JSON.parse(localStorage.getItem('tickets'))
+    ticketsArr.forEach(function(ticket){
+      createTicket(ticket.ticketColor , ticket.ticketTask , ticket.ticketID)
+    })
+}
+
+// update local storage on create, update(Task,color) and remove
+function updateLocalStorage(){
+    let strTicketArray = JSON.stringify(ticketArr)
+
+    localStorage.setItem('tickets' , strTicketArray)
+}
+
 // MODAL container show
 // Displaying or removing modal on addBtn click
 addBtn.addEventListener('click', function (e) {
@@ -104,7 +119,7 @@ function createTicket(color,task,taskId) {
         ticketTask : task,
         ticketId : taskId
     });
-
+    updateLocalStorage();
     console.log(ticketArr);
     // Based on the selected filter color show the ticket or don't show the ticket
     if(filterColor != undefined && filterColor != color){
@@ -134,7 +149,7 @@ function addRemoveListner(ticketCont,ticketId){
             // Storage
             let idx = getTicketArrayId(ticketId);
             ticketArr.splice(idx,1);
-
+            updateLocalStorage();
             console.log(ticketArr);
         }
     });
@@ -209,7 +224,7 @@ function addEditableListner(ticketCont,ticketId){
             let idx = getTicketArrayId(ticketId);
             ticketArr[idx].ticketColor = updatedColor;
             ticketArr[idx].ticketTask = ticketTaskArea.textContent;
-
+            updateLocalStorage();
             console.log(ticketArr);
         }
     })
